@@ -2117,7 +2117,7 @@ class ReformerElectraDiscriminatorPredictions(nn.Module):
     It is recommended to load the discriminator checkpoint into that model.""",
     REFORMER_START_DOCSTRING,
 )
-class ReformerElectraForPreTraining(ReformerPreTrainedModel):
+class ReformerForPreTraining(ReformerPreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels

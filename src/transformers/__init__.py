@@ -368,6 +368,7 @@ if is_torch_available():
         ReformerModel,
         ReformerForMaskedLM,
         ReformerModelWithLMHead,
+        ReformerForPreTraining,
         ReformerForQuestionAnswering,
         REFORMER_PRETRAINED_MODEL_ARCHIVE_LIST,
     )
