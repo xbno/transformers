@@ -859,12 +859,21 @@ TF_CAUSAL_LM_SAMPLE = r"""
 
 
 def add_code_sample_docstrings(
-    *docstr, tokenizer_class=None, checkpoint=None, output_type=None, config_class=None, mask=None
+    *docstr,
+    tokenizer_class=None,
+    checkpoint=None,
+    output_type=None,
+    config_class=None,
+    mask=None,
 ):
     def docstring_decorator(fn):
         model_class = fn.__qualname__.split(".")[0]
         is_tf_class = model_class[:2] == "TF"
-        doc_kwargs = dict(model_class=model_class, tokenizer_class=tokenizer_class, checkpoint=checkpoint)
+        doc_kwargs = dict(
+            model_class=model_class,
+            tokenizer_class=tokenizer_class,
+            checkpoint=checkpoint,
+        )
 
         if "SequenceClassification" in model_class:
             code_sample = TF_SEQUENCE_CLASSIFICATION_SAMPLE if is_tf_class else PT_SEQUENCE_CLASSIFICATION_SAMPLE
@@ -874,12 +883,17 @@ def add_code_sample_docstrings(
             code_sample = TF_TOKEN_CLASSIFICATION_SAMPLE if is_tf_class else PT_TOKEN_CLASSIFICATION_SAMPLE
         elif "MultipleChoice" in model_class:
             code_sample = TF_MULTIPLE_CHOICE_SAMPLE if is_tf_class else PT_MULTIPLE_CHOICE_SAMPLE
-        elif "MaskedLM" in model_class or model_class in ["FlaubertWithLMHeadModel", "XLMWithLMHeadModel"]:
+        elif "MaskedLM" in model_class or model_class in [
+            "FlaubertWithLMHeadModel",
+            "XLMWithLMHeadModel",
+        ]:
             doc_kwargs["mask"] = "[MASK]" if mask is None else mask
             code_sample = TF_MASKED_LM_SAMPLE if is_tf_class else PT_MASKED_LM_SAMPLE
         elif "LMHead" in model_class or "CausalLM" in model_class:
             code_sample = TF_CAUSAL_LM_SAMPLE if is_tf_class else PT_CAUSAL_LM_SAMPLE
         elif "Model" in model_class or "Encoder" in model_class:
+            code_sample = TF_BASE_MODEL_SAMPLE if is_tf_class else PT_BASE_MODEL_SAMPLE
+        elif "ForPretraining" in model_class:
             code_sample = TF_BASE_MODEL_SAMPLE if is_tf_class else PT_BASE_MODEL_SAMPLE
         else:
             raise ValueError(f"Docstring can't be built for model {model_class}")
@@ -918,7 +932,11 @@ def is_remote_url(url_or_filename):
 
 
 def hf_bucket_url(
-    model_id: str, filename: str, subfolder: Optional[str] = None, revision: Optional[str] = None, mirror=None
+    model_id: str,
+    filename: str,
+    subfolder: Optional[str] = None,
+    revision: Optional[str] = None,
+    mirror=None,
 ) -> str:
     """
     Resolve a model identifier, a file name, and an optional revision id, to a huggingface.co-hosted url, redirecting
@@ -1145,7 +1163,13 @@ def http_user_agent(user_agent: Union[Dict, str, None] = None) -> str:
     return ua
 
 
-def http_get(url: str, temp_file: BinaryIO, proxies=None, resume_size=0, headers: Optional[Dict[str, str]] = None):
+def http_get(
+    url: str,
+    temp_file: BinaryIO,
+    proxies=None,
+    resume_size=0,
+    headers: Optional[Dict[str, str]] = None,
+):
     """
     Donwload remote file. Do not gobble up errors.
     """
@@ -1212,7 +1236,13 @@ def get_from_cache(
     etag = None
     if not local_files_only:
         try:
-            r = requests.head(url, headers=headers, allow_redirects=False, proxies=proxies, timeout=etag_timeout)
+            r = requests.head(
+                url,
+                headers=headers,
+                allow_redirects=False,
+                proxies=proxies,
+                timeout=etag_timeout,
+            )
             r.raise_for_status()
             etag = r.headers.get("X-Linked-Etag") or r.headers.get("ETag")
             # We favor a custom header indicating the etag of the linked resource, and
@@ -1299,9 +1329,19 @@ def get_from_cache(
         # Download to temporary file, then copy to cache dir once finished.
         # Otherwise you get corrupt cache entries if the download gets interrupted.
         with temp_file_manager() as temp_file:
-            logger.info("%s not found in cache or force_download set to True, downloading to %s", url, temp_file.name)
+            logger.info(
+                "%s not found in cache or force_download set to True, downloading to %s",
+                url,
+                temp_file.name,
+            )
 
-            http_get(url_to_download, temp_file, proxies=proxies, resume_size=resume_size, headers=headers)
+            http_get(
+                url_to_download,
+                temp_file,
+                proxies=proxies,
+                resume_size=resume_size,
+                headers=headers,
+            )
 
         logger.info("storing %s in cache at %s", url, cache_path)
         os.replace(temp_file.name, cache_path)
