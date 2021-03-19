@@ -893,7 +893,7 @@ def add_code_sample_docstrings(
             code_sample = TF_CAUSAL_LM_SAMPLE if is_tf_class else PT_CAUSAL_LM_SAMPLE
         elif "Model" in model_class or "Encoder" in model_class:
             code_sample = TF_BASE_MODEL_SAMPLE if is_tf_class else PT_BASE_MODEL_SAMPLE
-        elif "ForPretraining" in model_class:
+        elif "ForPreTraining" in model_class:
             code_sample = TF_BASE_MODEL_SAMPLE if is_tf_class else PT_BASE_MODEL_SAMPLE
         else:
             raise ValueError(f"Docstring can't be built for model {model_class}")

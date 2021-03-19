@@ -38,6 +38,7 @@ if is_torch_available():
         "ReformerForMaskedLM",
         "ReformerForQuestionAnswering",
         "ReformerForSequenceClassification",
+        "ReformerForPreTraining",
         "ReformerLayer",
         "ReformerModel",
         "ReformerModelWithLMHead",
